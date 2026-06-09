@@ -54,7 +54,15 @@ setTimeout(function() {
   })
   .catch(function(err) {
     document.getElementById('loading').textContent = 'Coach offline.';
-    document.getElementById('feedback').innerText = 'Error: ' + err.message;
+    var text = '';
+if (data.content && data.content[0] && data.content[0].text) {
+  text = data.content[0].text;
+} else if (data.error) {
+  text = 'API Error: ' + data.error.message;
+} else {
+  text = JSON.stringify(data);
+}
+document.getElementById('feedback').innerText = text;
     try { window.parent.GetPlayer().SetVar('bool_ai_online', false); } catch(e) {}
   });
 }, 1000);
