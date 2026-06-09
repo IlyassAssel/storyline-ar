@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+window.addEventListener('message', function(e) {
+  if (e.data === 'ar_supported') {
+    window.parent.GetPlayer().SetVar('bool_ar_supported', true);
+  } else if (e.data === 'ar_not_supported') {
+    window.parent.GetPlayer().SetVar('bool_ar_supported', false);
+  }
+});
+</script>
+</body>
+</html>
