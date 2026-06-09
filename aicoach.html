@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  body { font-family: sans-serif; margin: 20px; background: transparent; }
+  #feedback { margin-top: 20px; padding: 15px; border-radius: 8px;
+              background: #f0f4ff; font-size: 14px; line-height: 1.6; }
+  #loading { color: #666; font-style: italic; }
+</style>
+</head>
+<body>
+<div id="loading">AI Coach is reviewing your objective…</div>
+<div id="feedback" style="display:none"></div>
+<script>
+setTimeout(function() {
+  var obj = '';
+  try {
+    var p = window.parent.GetPlayer();
+    var s = p.GetVar('txt_s');
+    var m = p.GetVar('txt_m');
+    var a = p.GetVar('txt_a');
+    var r = p.GetVar('txt_r');
+    var t = p.GetVar('txt_t');
+    obj = s + ' ' + m + ' ' + a + ' ' + r + ' ' + t;
+    p.SetVar('txt_smart_obj', obj);
+  } catch(e) {
+    obj = 'Increase vaccination rate by 20% in rural regions by Q4 2025';
+  }
+
+  fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': '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',
+      'anthropic-version': '2023-06-01',
+      'anthropic-dangerous-direct-browser-access': 'true'
+    },
+    body: JSON.stringify({
+      model: 'claude-haiku-4-5-20251001',
+      max_tokens: 300,
+      messages: [{
+        role: 'user',
+        content: 'You are a project management coach. Review this SMART objective and give brief feedback in 3 bullet points. Be specific and direct. Objective: ' + obj
+      }]
+    })
+  })
+  .then(function(r) { return r.json(); })
+  .then(function(data) {
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('feedback').style.display = 'block';
+    document.getElementById('feedback').innerText = data.content[0].text;
+    try { window.parent.GetPlayer().SetVar('bool_ai_online', true); } catch(e) {}
+  })
+  .catch(function() {
+    document.getElementById('loading').textContent = 'Coach offline — see fallback below.';
+    try { window.parent.GetPlayer().SetVar('bool_ai_online', false); } catch(e) {}
+  });
+}, 1000);
+</script>
+</body>
+</html>
