@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+navigator.mediaDevices.getUserMedia({ video: true })
+  .then(function() {
+    window.parent.postMessage('ar_supported', '*');
+  })
+  .catch(function() {
+    window.parent.postMessage('ar_not_supported', '*');
+  });
+</script>
+</body>
+</html>
