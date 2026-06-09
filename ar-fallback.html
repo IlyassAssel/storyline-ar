@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body { margin: 0; background: transparent; display: flex; justify-content: center; align-items: center; height: 100vh; }
+    svg { width: 90%; max-width: 500px; }
+    circle { cursor: grab; }
+    circle:active { cursor: grabbing; }
+  </style>
+</head>
+<body>
+<svg id="svg" viewBox="0 0 400 400">
+  <!-- Линии треугольника -->
+  <line id="line-sc" stroke="#378ADD" stroke-width="2"/>
+  <line id="line-ct" stroke="#378ADD" stroke-width="2"/>
+  <line id="line-ts" stroke="#378ADD" stroke-width="2"/>
+
+  <!-- Quality в центре -->
+  <circle id="quality" r="18" fill="#1D9E75"/>
+  <text id="qt" text-anchor="middle" dominant-baseline="central" fill="white" font-size="11">Quality</text>
+
+  <!-- Углы -->
+  <circle id="scope" r="22" fill="#378ADD"/>
+  <text id="st" text-anchor="middle" dominant-baseline="central" fill="white" font-size="11">Scope</text>
+
+  <circle id="time" r="22" fill="#EF9F27"/>
+  <text id="tt" text-anchor="middle" dominant-baseline="central" fill="white" font-size="11">Time</text>
+
+  <circle id="cost" r="22" fill="#E24B4A"/>
+  <text id="ct" text-anchor="middle" dominant-baseline="central" fill="white" font-size="11">Cost</text>
+</svg>
+
+<script>
+  var points = {
+    scope: {x: 200, y: 60},
+    time:  {x: 60,  y: 340},
+    cost:  {x: 340, y: 340}
+  };
+
+  var dragged = false;
+  var dragging = null;
+  var svg = document.getElementById('svg');
+
+  function update() {
+    var cx = (points.scope.x + points.time.x + points.cost.x) / 3;
+    var cy = (points.scope.y + points.time.y + points.cost.y) / 3;
+
+    document.getElementById('scope').setAttribute('cx', points.scope.x);
+    document.getElementById('scope').setAttribute('cy', points.scope.y);
+    document.getElementById('st').setAttribute('x', points.scope.x);
+    document.getElementById('st').setAttribute('y', points.scope.y);
+
+    document.getElementById('time').setAttribute('cx', points.time.x);
+    document.getElementById('time').setAttribute('cy', points.time.y);
+    document.getElementById('tt').setAttribute('x', points.time.x);
+    document.getElementById('tt').setAttribute('y', points.time.y);
+
+    document.getElementById('cost').setAttribute('cx', points.cost.x);
+    document.getElementById('cost').setAttribute('cy', points.cost.y);
+    document.getElementById('ct').setAttribute('x', points.cost.x);
+    document.getElementById('ct').setAttribute('y', points.cost.y);
+
+    document.getElementById('quality').setAttribute('cx', cx);
+    document.getElementById('quality').setAttribute('cy', cy);
+    document.getElementById('qt').setAttribute('x', cx);
+    document.getElementById('qt').setAttribute('y', cy);
+
+    document.getElementById('line-sc').setAttribute('x1', points.scope.x);
+    document.getElementById('line-sc').setAttribute('y1', points.scope.y);
+    document.getElementById('line-sc').setAttribute('x2', points.cost.x);
+    document.getElementById('line-sc').setAttribute('y2', points.cost.y);
+
+    document.getElementById('line-ct').setAttribute('x1', points.cost.x);
+    document.getElementById('line-ct').setAttribute('y1', points.cost.y);
+    document.getElementById('line-ct').setAttribute('x2', points.time.x);
+    document.getElementById('line-ct').setAttribute('y2', points.time.y);
+
+    document.getElementById('line-ts').setAttribute('x1', points.time.x);
+    document.getElementById('line-ts').setAttribute('y1', points.time.y);
+    document.getElementById('line-ts').setAttribute('x2', points.scope.x);
+    document.getElementById('line-ts').setAttribute('y2', points.scope.y);
+  }
+
+  function getPos(e) {
+    var rect = svg.getBoundingClientRect();
+    var vb = 400;
+    var scale = vb / rect.width;
+    var touch = e.touches ? e.touches[0] : e;
+    return {
+      x: (touch.clientX - rect.left) * scale,
+      y: (touch.clientY - rect.top) * scale
+    };
+  }
+
+  ['scope','time','cost'].forEach(function(id) {
+    var el = document.getElementById(id);
+    el.addEventListener('mousedown', function() { dragging = id; });
+    el.addEventListener('touchstart', function() { dragging = id; }, {passive: true});
+  });
+
+  svg.addEventListener('mousemove', function(e) {
+    if (!dragging) return;
+    var pos = getPos(e);
+    points[dragging] = pos;
+    update();
+    if (!dragged) {
+      dragged = true;
+      window.parent.postMessage('corner_dragged', '*');
+    }
+  });
+
+  svg.addEventListener('touchmove', function(e) {
+    if (!dragging) return;
+    var pos = getPos(e);
+    points[dragging] = pos;
+    update();
+    if (!dragged) {
+      dragged = true;
+      window.parent.postMessage('corner_dragged', '*');
+    }
+  }, {passive: true});
+
+  svg.addEventListener('mouseup', function() { dragging = null; });
+  svg.addEventListener('touchend', function() { dragging = null; });
+
+  update();
+</script>
+</body>
+</html>
