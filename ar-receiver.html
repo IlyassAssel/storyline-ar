@@ -4,9 +4,19 @@
 <script>
 window.addEventListener('message', function(e) {
   if (e.data === 'ar_supported') {
-    window.parent.GetPlayer().SetVar('bool_ar_supported', true);
+    try {
+      var p = window.parent.GetPlayer();
+      p.SetVar('bool_ar_supported', true);
+    } catch(err) {
+      console.log('GetPlayer error:', err);
+    }
   } else if (e.data === 'ar_not_supported') {
-    window.parent.GetPlayer().SetVar('bool_ar_supported', false);
+    try {
+      var p = window.parent.GetPlayer();
+      p.SetVar('bool_ar_supported', false);
+    } catch(err) {
+      console.log('GetPlayer error:', err);
+    }
   }
 });
 </script>
