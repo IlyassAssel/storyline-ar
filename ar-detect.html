@@ -2,13 +2,20 @@
 <html>
 <body>
 <script>
-navigator.mediaDevices.getUserMedia({ video: true })
-  .then(function() {
-    window.parent.postMessage('ar_supported', '*');
-  })
-  .catch(function() {
-    window.parent.postMessage('ar_not_supported', '*');
-  });
+setTimeout(function() {
+  navigator.mediaDevices.getUserMedia({ video: true })
+    .then(function(stream) {
+      stream.getTracks().forEach(function(t) { t.stop(); });
+      try {
+        window.parent.GetPlayer().SetVar('bool_ar_supported', true);
+      } catch(e) {}
+    })
+    .catch(function() {
+      try {
+        window.parent.GetPlayer().SetVar('bool_ar_supported', false);
+      } catch(e) {}
+    });
+}, 1000);
 </script>
 </body>
 </html>
