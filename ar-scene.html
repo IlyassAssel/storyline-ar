@@ -9,7 +9,7 @@ video { width: 100%; height: 100vh; object-fit: cover; }
 </style>
 </head>
 <body>
-<div id="status"> Loading the camera...</div>
+<div id="status">Loading the camera...</div>
 <script>
 navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
   .then(function(stream) {
