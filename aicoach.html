@@ -3,67 +3,31 @@
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
-  body { font-family: sans-serif; margin: 20px; background: transparent; }
-  #feedback { margin-top: 20px; padding: 15px; border-radius: 8px; background: #f0f4ff; font-size: 14px; line-height: 1.6; display: none; }
-  #loading { color: #666; font-style: italic; margin-bottom: 10px; }
+  body { font-family: sans-serif; margin: 0; padding: 20px; background: transparent; }
+  .demo-badge { display: inline-block; background: #ff9500; color: white; font-size: 11px; padding: 3px 8px; border-radius: 12px; margin-bottom: 16px; font-weight: bold; letter-spacing: 0.5px; }
+  .coach-box { background: #f0f4ff; border-left: 4px solid #378ADD; border-radius: 8px; padding: 16px; margin-bottom: 16px; }
+  .coach-box h3 { margin: 0 0 10px 0; color: #185FA5; font-size: 14px; }
+  .bullet { display: flex; gap: 8px; margin-bottom: 8px; font-size: 13px; line-height: 1.5; color: #333; }
+  .bullet span:first-child { color: #378ADD; font-weight: bold; flex-shrink: 0; }
+  .demo-note { background: #fff8e1; border: 1px solid #ffd54f; border-radius: 8px; padding: 12px 16px; font-size: 12px; color: #666; line-height: 1.6; }
+  .demo-note strong { color: #333; }
 </style>
 </head>
 <body>
-<div id="loading">AI Coach is reviewing your objective…</div>
-<div id="feedback"></div>
-<script>
-setTimeout(function() {
-  var obj = '';
-  try {
-    var p = window.parent.GetPlayer();
-    var s = p.GetVar('txt_s') || '';
-    var m = p.GetVar('txt_m') || '';
-    var a = p.GetVar('txt_a') || '';
-    var r = p.GetVar('txt_r') || '';
-    var t = p.GetVar('txt_t') || '';
-    obj = [s, m, a, r, t].filter(Boolean).join(' ');
-    p.SetVar('txt_smart_obj', obj);
-  } catch(e) {
-    obj = 'Increase vaccination rate by 20% in rural regions by Q4 2025';
-  }
 
-  fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-api-key': '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',
-      'anthropic-version': '2023-06-01',
-      'anthropic-dangerous-direct-browser-access': 'true'
-    },
-    body: JSON.stringify({
-      model: 'claude-haiku-4-5-20251001',
-      max_tokens: 300,
-      messages: [{
-        role: 'user',
-        content: 'You are a project management coach. Review this SMART objective and give brief feedback in 3 bullet points. Be specific and direct. Objective: ' + obj
-      }]
-    })
-  })
-  .then(function(response) { return response.json(); })
-  .then(function(data) {
-    document.getElementById('loading').style.display = 'none';
-    document.getElementById('feedback').style.display = 'block';
-    if (data.content && data.content[0] && data.content[0].text) {
-      document.getElementById('feedback').innerText = data.content[0].text;
-    } else if (data.error) {
-      document.getElementById('feedback').innerText = 'API Error: ' + data.error.message;
-    } else {
-      document.getElementById('feedback').innerText = JSON.stringify(data);
-    }
-    try { window.parent.GetPlayer().SetVar('bool_ai_online', true); } catch(e) {}
-  })
-  .catch(function(err) {
-    document.getElementById('loading').textContent = 'Coach offline.';
-    document.getElementById('feedback').style.display = 'block';
-    document.getElementById('feedback').innerText = 'Error: ' + err.message;
-    try { window.parent.GetPlayer().SetVar('bool_ai_online', false); } catch(e) {}
-  });
-}, 1000);
-</script>
+<div class="demo-badge">⚡ DEMO MODE</div>
+
+<div class="coach-box">
+  <h3>🤖 AI Coach Feedback</h3>
+  <div class="bullet"><span>•</span><span><strong>Strength:</strong> Your objective includes a measurable target (20%) and a clear deadline (Q4 2025) — these are the backbone of any strong SMART objective.</span></div>
+  <div class="bullet"><span>•</span><span><strong>Improve:</strong> "Rural regions" is vague — specify which region, district, or population size to make it truly Specific and actionable for your team.</span></div>
+  <div class="bullet"><span>•</span><span><strong>Consider:</strong> Add a resource or method component — e.g. "using mobile vaccination units" — to make the Achievable dimension explicit and build stakeholder confidence.</span></div>
+</div>
+
+<div class="demo-note">
+  <strong>📌 Demo version</strong><br>
+  In the full course, this feedback is generated live by an AI coach that reads <em>your</em> objective and gives personalised, real-time critique — no canned responses. The coach also tracks your revisions and compares your before/after objective to measure improvement.
+</div>
+
 </body>
 </html>
