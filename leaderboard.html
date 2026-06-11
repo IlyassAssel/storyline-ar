@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+  body { font-family: sans-serif; margin: 20px; background: transparent; }
+  table { width: 100%; border-collapse: collapse; }
+  th { background: #378ADD; color: white; padding: 10px; text-align: left; }
+  td { padding: 8px 10px; border-bottom: 1px solid #eee; }
+  .highlight { background: #fff3cd; font-weight: bold; }
+</style>
+</head>
+<body>
+<table>
+  <tr><th>Rank</th><th>Name</th><th>XP</th><th>Level</th></tr>
+  <tr><td>1</td><td>Sarah K.</td><td>420</td><td>3</td></tr>
+  <tr><td>2</td><td>James O.</td><td>385</td><td>3</td></tr>
+  <tr><td>3</td><td>Maria L.</td><td>340</td><td>2</td></tr>
+  <tr class="highlight"><td>4</td><td id="lname">You</td><td id="lxp">—</td><td id="llevel">—</td></tr>
+  <tr><td>5</td><td>Ahmed R.</td><td>290</td><td>2</td></tr>
+</table>
+<script>
+setTimeout(function() {
+  try {
+    var p = window.parent.GetPlayer();
+    document.getElementById('lname').innerText = p.GetVar('txt_name') || 'You';
+    document.getElementById('lxp').innerText = p.GetVar('num_xp') || '0';
+    document.getElementById('llevel').innerText = p.GetVar('num_level') || '1';
+  } catch(e) {}
+}, 500);
+</script>
+</body>
+</html>
