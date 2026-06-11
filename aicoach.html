@@ -4,7 +4,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
   body { font-family: sans-serif; margin: 20px; background: transparent; }
-  #feedback { margin-top: 20px; padding: 15px; border-radius: 8px; background: #f0f4ff; font-size: 14px; line-height: 1.6; }
+  #feedback { margin-top: 20px; padding: 15px; border-radius: 8px; background: #f0f4ff; font-size: 14px; line-height: 1.6; display: none; }
   #loading { color: #666; font-style: italic; margin-bottom: 10px; }
 </style>
 </head>
@@ -27,8 +27,6 @@ setTimeout(function() {
     obj = 'Increase vaccination rate by 20% in rural regions by Q4 2025';
   }
 
-  document.getElementById('feedback').innerHTML = '<em>Reviewing: ' + obj + '</em>';
-
   fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
     headers: {
@@ -46,23 +44,23 @@ setTimeout(function() {
       }]
     })
   })
-  .then(function(r) { return r.json(); })
+  .then(function(response) { return response.json(); })
   .then(function(data) {
     document.getElementById('loading').style.display = 'none';
-    document.getElementById('feedback').innerText = data.content[0].text;
+    document.getElementById('feedback').style.display = 'block';
+    if (data.content && data.content[0] && data.content[0].text) {
+      document.getElementById('feedback').innerText = data.content[0].text;
+    } else if (data.error) {
+      document.getElementById('feedback').innerText = 'API Error: ' + data.error.message;
+    } else {
+      document.getElementById('feedback').innerText = JSON.stringify(data);
+    }
     try { window.parent.GetPlayer().SetVar('bool_ai_online', true); } catch(e) {}
   })
   .catch(function(err) {
     document.getElementById('loading').textContent = 'Coach offline.';
-    var text = '';
-if (data.content && data.content[0] && data.content[0].text) {
-  text = data.content[0].text;
-} else if (data.error) {
-  text = 'API Error: ' + data.error.message;
-} else {
-  text = JSON.stringify(data);
-}
-document.getElementById('feedback').innerText = text;
+    document.getElementById('feedback').style.display = 'block';
+    document.getElementById('feedback').innerText = 'Error: ' + err.message;
     try { window.parent.GetPlayer().SetVar('bool_ai_online', false); } catch(e) {}
   });
 }, 1000);
