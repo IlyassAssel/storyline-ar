@@ -9,11 +9,11 @@ video { width: 100%; height: 100vh; object-fit: cover; }
 </style>
 </head>
 <body>
-<div id="status">Загрузка камеры...</div>
+<div id="status"> Loading the camera...</div>
 <script>
 navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
   .then(function(stream) {
-    document.getElementById('status').textContent = 'Камера работает! Наведи на маркер.';
+    document.getElementById('status').textContent = 'The camera is working! Point to the marker.';
     var video = document.createElement('video');
     video.srcObject = stream;
     video.autoplay = true;
@@ -22,7 +22,7 @@ navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
     window.parent.postMessage('corner_dragged', '*');
   })
   .catch(function(err) {
-    document.getElementById('status').textContent = 'Ошибка камеры: ' + err.message;
+    document.getElementById('status').textContent = 'Camera error: ' + err.message;
   });
 </script>
 </body>
