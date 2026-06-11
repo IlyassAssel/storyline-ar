@@ -2,28 +2,35 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.2/dist/mindar-image.prod.js"></script>
+<script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.2/dist/mindar-image-aframe.prod.js"></script>
 <style>
-body { margin: 0; background: #000; }
-#status { color: white; font-family: sans-serif; padding: 20px; font-size: 16px; }
-video { width: 100%; height: 100vh; object-fit: cover; }
+body { margin: 0; overflow: hidden; }
 </style>
 </head>
 <body>
-<div id="status">Loading the camera...</div>
-<script>
-navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
-  .then(function(stream) {
-    document.getElementById('status').textContent = 'The camera is working! Point to the marker.';
-    var video = document.createElement('video');
-    video.srcObject = stream;
-    video.autoplay = true;
-    video.playsinline = true;
-    document.body.appendChild(video);
-    window.parent.postMessage('corner_dragged', '*');
-  })
-  .catch(function(err) {
-    document.getElementById('status').textContent = 'Camera error: ' + err.message;
-  });
-</script>
+<a-scene
+  mindar-image="imageTargetSrc: https://raw.githubusercontent.com/ilyassassel/storyline-ar/main/targets.mind;"
+  color-space="sRGB"
+  renderer="colorManagement: true"
+  vr-mode-ui="enabled: false"
+  device-orientation-permission-ui="enabled: false">
+
+  <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
+
+  <a-entity mindar-image-target="targetIndex: 0">
+    <a-triangle
+      color="#378ADD"
+      opacity="0.7"
+      position="0 0 0"
+      scale="0.5 0.5 0.5">
+    </a-triangle>
+    <a-text value="Scope" position="-0.3 0.3 0" color="#ffffff" scale="0.5 0.5 0.5"></a-text>
+    <a-text value="Time" position="0.3 0.3 0" color="#ffffff" scale="0.5 0.5 0.5"></a-text>
+    <a-text value="Cost" position="0 -0.3 0" color="#ffffff" scale="0.5 0.5 0.5"></a-text>
+    <a-text value="Quality" position="0 0 0.1" color="#1D9E75" scale="0.4 0.4 0.4"></a-text>
+  </a-entity>
+</a-scene>
 </body>
 </html>
